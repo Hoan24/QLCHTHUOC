@@ -2,18 +2,27 @@
 using QLCHTHUOC.Model.DTO;
 using QLCHTHUOC.Model;
 using QLCHTHUOC.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace QLCHTHUOC.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    
+
     public class OrderController : Controller
     {
         private readonly IOrder _order;
-        public OrderController(IOrder order)
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly ITokenRepository _tokenRepository;
+        public OrderController(IOrder order, UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
         {
             _order = order;
+            _userManager = userManager;
+            _tokenRepository = tokenRepository;
         }
+        [Authorize(Roles = "Read,Write")]
         [HttpGet("Get-all-Order")]
         public IActionResult GetAll(string? filterOn = null, string?
 filterQuery = null, string? sortBy = null,
@@ -28,6 +37,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        [Authorize(Roles = "Read,Write")]
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -40,8 +50,9 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        [Authorize(Roles = "Read,Write")]
         [HttpPost]
-        public IActionResult Addorder(OrderDTO orderdto)
+        public IActionResult Addorder(OrderAddDTO orderdto)
         {
             try
             {
@@ -52,6 +63,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        [Authorize(Roles = "Read,Write")]
         [HttpPut]
         public IActionResult Updateorder(OrderDTO orderDTO)
         {
@@ -65,6 +77,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        [Authorize(Roles = "Write")]
         [HttpDelete]
         public IActionResult Deleteorder(int id)
         {

@@ -8,7 +8,7 @@ namespace QLCHTHUOC.Services.Interfaces
 filterQuery = null, string? sortBy = null,
  bool isAscending = true, int pageNumber = 1, int pageSize = 1000);
         OrderDTO GetOrder (int id);
-        OrderAddDTO OrderAdd (OrderDTO dto);
+        OrderAddDTO OrderAdd (OrderAddDTO dto);
        void  Update(OrderDTO OrderDTO);
         void DeleteOrder (int id);
     }

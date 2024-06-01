@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using QLCHTHUOC.Model.DTO;
 using QLCHTHUOC.Services.Interfaces;
 
@@ -6,14 +8,21 @@ namespace QLCHTHUOC.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
+
     public class CustomerController : ControllerBase
     {
 
         private readonly ICustomer _customer;
-        public CustomerController(ICustomer customer)
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly ITokenRepository _tokenRepository;
+        public CustomerController(ICustomer customer, UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
         {
             _customer = customer;
+            _userManager = userManager;
+            _tokenRepository = tokenRepository;
         }
+        [Authorize(Roles = "Read,Write")]
         [HttpGet("get-all-customer")]
         public IActionResult GetAll(string? filterOn = null, string?
 filterQuery = null, string? sortBy = null,
@@ -40,6 +49,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        [Authorize(Roles = "Read,Write")]
         [HttpPost]
         public IActionResult AddCustomer(CustomerAddDTO customerDTO)
         {
@@ -52,6 +62,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        [Authorize(Roles = "Read,Write")]
         [HttpPut]
         public IActionResult UpdateCustomer(CustomerDTO customerDTO)
         {
@@ -65,6 +76,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        [Authorize(Roles = "Read,Write")]
         [HttpDelete]
         public IActionResult DeleteCustomer(int id)
         {

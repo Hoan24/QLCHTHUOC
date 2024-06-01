@@ -13,12 +13,19 @@ namespace QLCHTHUOC.Services.RePon
         }
         public void DeleteMedicine(int id)
         {
-            var del=_appDbContext.Medicines.SingleOrDefault(m => m.Id == id);
-            if (del != null)
+            var d=_appDbContext.OrderDetails.SingleOrDefault(o=>o.Id == id);
+            if (d != null)
             {
-                _appDbContext.Medicines.Remove(del);
+                _appDbContext.OrderDetails.Remove(d);
                 _appDbContext.SaveChanges();
+                var del = _appDbContext.Medicines.SingleOrDefault(m => m.Id == id);
+                if (del != null)
+                {
+                    _appDbContext.Medicines.Remove(del);
+                    _appDbContext.SaveChanges();
+                }
             }
+           
             
         }
 

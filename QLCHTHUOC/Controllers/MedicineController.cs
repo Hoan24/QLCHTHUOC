@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using QLCHTHUOC.Model.DTO;
 using QLCHTHUOC.Services.Interfaces;
 
@@ -6,14 +8,20 @@ namespace QLCHTHUOC.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
+
     public class MedicineController : ControllerBase
     {
         private readonly IMedicine _medicine;
-        public MedicineController(IMedicine medicine)
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly ITokenRepository _tokenRepository;
+        public MedicineController(IMedicine medicine, UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
         {
             _medicine = medicine;
+            _userManager= userManager;
+            _tokenRepository= tokenRepository;
         }
-        
+        [AllowAnonymous]
         [HttpGet("get-all-medicine")]
         public IActionResult GetAll(string? filterOn = null, string?
 filterQuery = null, string? sortBy = null,
@@ -28,6 +36,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        [Authorize(Roles = "Read,Write")]
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -40,6 +49,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        [Authorize(Roles = "Read,Write")]
         [HttpPost]
         public IActionResult AddMedicine(MedicineAddDTO medicineDTO)
         {
@@ -52,6 +62,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        [Authorize(Roles = "Read,Write")]
         [HttpPut]
         public IActionResult UpdateCustomer(MedicineDTO medicineDTO)
         {
@@ -65,6 +76,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        [Authorize(Roles = "Read,Write")]
         [HttpDelete]
         public IActionResult DeleteMedicine(int id)
         {

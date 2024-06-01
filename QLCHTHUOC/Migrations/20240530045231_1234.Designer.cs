@@ -12,8 +12,8 @@ using QLCHTHUOC.Data;
 namespace QLCHTHUOC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240527010757_abc")]
-    partial class abc
+    [Migration("20240530045231_1234")]
+    partial class _1234
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -111,12 +111,6 @@ namespace QLCHTHUOC.Migrations
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 

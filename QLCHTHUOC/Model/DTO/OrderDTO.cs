@@ -7,6 +7,8 @@
         public DateTime OrderDate { get; set; }
         public Customer Customer { get; set; }
         public string CustomerName { get; set; }
+        public List<string> MedicineName { get; set; }
+        
 
     }
 }
