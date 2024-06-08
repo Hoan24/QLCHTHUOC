@@ -9,7 +9,7 @@ namespace QLCHTHUOC.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    
     public class UserController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;

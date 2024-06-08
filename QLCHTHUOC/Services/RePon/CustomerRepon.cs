@@ -16,10 +16,23 @@ namespace QLCHTHUOC.Services.RePon
         }
         public void DeleteCustomer(int id)
         {
-            var del = _appDbContext.Customers.SingleOrDefault(m => m.Id == id);
-            if (del != null)
+            var customer = _appDbContext.Customers.SingleOrDefault(m => m.Id == id);
+            if (customer != null)
             {
-                _appDbContext.Customers.Remove(del);
+                var orders = _appDbContext.Orders.Where(o => o.CustomerId == id).ToList();
+                foreach (var order in orders)
+                {
+                    var orderDetails = _appDbContext.OrderDetails.Where(od => od.OrderId == order.Id).ToList();
+                    foreach (var orderDetail in orderDetails)
+                    {
+                        _appDbContext.OrderDetails.Remove(orderDetail);
+                    }
+
+                    _appDbContext.Orders.Remove(order);
+                }
+
+                _appDbContext.Customers.Remove(customer);
+
                 _appDbContext.SaveChanges();
             }
         }

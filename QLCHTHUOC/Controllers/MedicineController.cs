@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using QLCHTHUOC.Model.DTO;
 using QLCHTHUOC.Services.Interfaces;
+using System.Text.Json;
 
 namespace QLCHTHUOC.Controllers
 {
@@ -15,21 +16,31 @@ namespace QLCHTHUOC.Controllers
         private readonly IMedicine _medicine;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ITokenRepository _tokenRepository;
-        public MedicineController(IMedicine medicine, UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
+        private readonly ILogger<MedicineController> _logger;
+        public MedicineController(IMedicine medicine, UserManager<IdentityUser> userManager, ITokenRepository tokenRepository, ILogger<MedicineController> logger)
         {
             _medicine = medicine;
-            _userManager= userManager;
-            _tokenRepository= tokenRepository;
+            _userManager = userManager;
+            _tokenRepository = tokenRepository;
+            _logger = logger;
         }
-        [AllowAnonymous]
+        
         [HttpGet("get-all-medicine")]
+        [Authorize(Roles = "Read")]
         public IActionResult GetAll(string? filterOn = null, string?
 filterQuery = null, string? sortBy = null,
  bool isAscending = true, int pageNumber = 1, int pageSize = 1000)
         {
             try
             {
-                return Ok(_medicine.MedicineDTOs(filterOn, filterQuery, sortBy, isAscending, pageNumber, pageNumber));
+                _logger.LogInformation("GetAll Medicine Action method was invoked");
+                _logger.LogWarning("This is a warning log");
+                _logger.LogError("This is a error log");
+                var allMedidcine = _medicine.MedicineDTOs(filterOn, filterQuery, sortBy, isAscending, pageNumber, pageNumber);
+
+                _logger.LogInformation($"Finished GetAllBook request with data { JsonSerializer.Serialize(allMedidcine)}");
+
+                return Ok(allMedidcine);  
             }
             catch
             {
@@ -77,7 +88,7 @@ filterQuery = null, string? sortBy = null,
             }
         }
         [Authorize(Roles = "Read,Write")]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult DeleteMedicine(int id)
         {
             try

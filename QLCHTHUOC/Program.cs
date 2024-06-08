@@ -7,17 +7,30 @@ using Microsoft.OpenApi.Models;
 using QLCHTHUOC.Data;
 using QLCHTHUOC.Services.Interfaces;
 using QLCHTHUOC.Services.RePon;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.ClearProviders();
+    loggingBuilder.AddConsole();
+});
 // Add services to the container.
+builder.Services.AddHttpClient();
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
-    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Book")
+    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Medicine")
     .AddEntityFrameworkStores<BaoCaoDbContext>()
     .AddDefaultTokenProviders();
-
+// Add services to the container.
+var _logger = new LoggerConfiguration()
+ .WriteTo.Console()// ghi ra console 
+ .WriteTo.File("Logs/Medicine_log.txt", rollingInterval: RollingInterval.Minute)
+ .MinimumLevel.Information()
+ .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(_logger);
 builder.Services.Configure<IdentityOptions>(option =>
 {
     option.Password.RequireDigit = false;
@@ -34,7 +47,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Book API",
+        Title = "Medicine API",
         Version = "v1"
     });
     options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
@@ -63,12 +76,8 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddLogging(loggingBuilder =>
-{
-    loggingBuilder.ClearProviders();
-    loggingBuilder.AddConsole();
-});
 
+//Interface và Reponsitory
 builder.Services.AddScoped<IOrder, OrderRePon>();
 builder.Services.AddScoped<IMedicine, MedicineRePon>();
 builder.Services.AddScoped<ICustomer, CustomerRepon>();
@@ -114,6 +123,7 @@ else
 }
 
 app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
 

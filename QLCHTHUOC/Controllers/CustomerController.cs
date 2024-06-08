@@ -9,7 +9,6 @@ namespace QLCHTHUOC.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-
     public class CustomerController : ControllerBase
     {
 
@@ -77,7 +76,7 @@ filterQuery = null, string? sortBy = null,
             }
         }
         [Authorize(Roles = "Read,Write")]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult DeleteCustomer(int id)
         {
             try

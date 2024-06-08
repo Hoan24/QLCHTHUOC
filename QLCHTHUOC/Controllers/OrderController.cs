@@ -9,8 +9,6 @@ namespace QLCHTHUOC.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    
-
     public class OrderController : Controller
     {
         private readonly IOrder _order;
@@ -78,7 +76,7 @@ filterQuery = null, string? sortBy = null,
             }
         }
         [Authorize(Roles = "Write")]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult Deleteorder(int id)
         {
             try
