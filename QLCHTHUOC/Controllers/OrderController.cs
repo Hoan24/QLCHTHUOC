@@ -20,7 +20,7 @@ namespace QLCHTHUOC.Controllers
             _userManager = userManager;
             _tokenRepository = tokenRepository;
         }
-        [Authorize(Roles = "Read,Write")]
+        [Authorize(Roles = "Write")]
         [HttpGet("Get-all-Order")]
         public IActionResult GetAll(string? filterOn = null, string?
 filterQuery = null, string? sortBy = null,
@@ -35,7 +35,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-        [Authorize(Roles = "Read,Write")]
+        [Authorize(Roles = "Write")]
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -48,7 +48,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-        [Authorize(Roles = "Read,Write")]
+        [Authorize(Roles = "Write")]
         [HttpPost]
         public IActionResult Addorder(OrderAddDTO orderdto)
         {
@@ -61,7 +61,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-        [Authorize(Roles = "Read,Write")]
+        [Authorize(Roles = "Write")]
         [HttpPut]
         public IActionResult Updateorder(OrderDTO orderDTO)
         {

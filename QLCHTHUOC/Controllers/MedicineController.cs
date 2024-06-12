@@ -70,7 +70,7 @@ namespace QLCHTHUOC.Controllers
             }
         }
 
-        [Authorize(Roles = "Read,Write")]
+        [Authorize(Roles = "Write")]
         [HttpPut("update-by-id/{id}")]
         public IActionResult UpdateCustomer(MedicineDTO medicineDTO)
         {
@@ -85,7 +85,7 @@ namespace QLCHTHUOC.Controllers
             }
         }
 
-        [Authorize(Roles = "Read,Write")]
+        [Authorize(Roles = "Write")]
         [HttpDelete("del-by-id/{id}")]
         public IActionResult DeleteMedicine(int id)
         {

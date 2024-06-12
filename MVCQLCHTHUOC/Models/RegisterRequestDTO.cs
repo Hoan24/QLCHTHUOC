@@ -1,10 +1,9 @@
 ﻿namespace MVCQLCHTHUOC.Models
 {
-    public class LoginResponseDTO
+    public class RegisterRequestDTO
     {
-        public string JwtToken { get; set; }
         public string Username { get; set; }
-        public string Email { get; set; }
+        public string Password { get; set; }
         public List<string> Roles { get; set; }
     }
 }

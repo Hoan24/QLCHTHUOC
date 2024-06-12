@@ -28,7 +28,7 @@ namespace MVCQLCHTHUOC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var registerRequest = new RegisterViewModel
+                var registerRequest = new RegisterRequestDTO
                 {
                     Username = model.Username,
                     Password = model.Password,
@@ -44,16 +44,17 @@ namespace MVCQLCHTHUOC.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     ViewBag.RegisterSuccess = true;
-                    ViewBag.RedirectTime = 3000;
                     return RedirectToAction("Login");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Registration failed.");
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    ModelState.AddModelError(string.Empty, $"Registration failed: {errorContent}");
                 }
             }
             return View(model);
         }
+
 
         [HttpGet]
         public IActionResult Login()
@@ -83,16 +84,13 @@ namespace MVCQLCHTHUOC.Controllers
                     
                     if (!string.IsNullOrEmpty(loginResponse.JwtToken))
                     {
-                        // Đặt giá trị vào session
                         HttpContext.Session.SetString("JwtToken", loginResponse.JwtToken);
                         HttpContext.Session.SetString("Username", loginResponse.Username);
 
-                        // Chuyển hướng đến trang "Medicine" khi có JWT token
                         return RedirectToAction("Index", "Medicine");
                     }
                     else
                     {
-                        // Xử lý lỗi khi không nhận được JWT token
                         ModelState.AddModelError(string.Empty, "No JWT token received from the server.");
                     }
                 }

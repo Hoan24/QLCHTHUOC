@@ -21,7 +21,7 @@ namespace QLCHTHUOC.Controllers
             _userManager = userManager;
             _tokenRepository = tokenRepository;
         }
-        [Authorize(Roles = "Read,Write")]
+        [Authorize(Roles = "Write")]
         [HttpGet("get-all-customer")]
         public IActionResult GetAll(string? filterOn = null, string?
 filterQuery = null, string? sortBy = null,
@@ -48,7 +48,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-        [Authorize(Roles = "Read,Write")]
+        [Authorize(Roles = "Write")]
         [HttpPost("add-customer")]
         public IActionResult AddCustomer(CustomerAddDTO customerDTO)
         {
@@ -61,7 +61,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-        [Authorize(Roles = "Read,Write")]
+        [Authorize(Roles = "Write")]
         [HttpPut("update-by-id/{id}")]
         public IActionResult UpdateCustomer(CustomerDTO customerDTO)
         {
@@ -75,7 +75,7 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-        [Authorize(Roles = "Read,Write")]
+        [Authorize(Roles = "Write")]
         [HttpDelete("del-by-id/{id}")]
         public IActionResult DeleteCustomer(int id)
         {

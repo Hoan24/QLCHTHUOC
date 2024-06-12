@@ -66,12 +66,12 @@
 <script>
     document.getElementById('registerForm').addEventListener('submit', function (event) {
         var selectedRoles = [];
-        document.querySelectorAll('input[name="Roles"]:checked').forEach(function (checkbox) {
+        document.querySelectorAll('input[name="Name"]:checked').forEach(function (checkbox) {
             selectedRoles.push(checkbox.value);
         });
         var hiddenRolesField = document.createElement('input');
         hiddenRolesField.type = 'hidden';
-        hiddenRolesField.name = 'Roles';
+        hiddenRolesField.name = 'Name';
         hiddenRolesField.value = JSON.stringify(selectedRoles);
         this.appendChild(hiddenRolesField);
     });

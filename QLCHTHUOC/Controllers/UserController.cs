@@ -45,25 +45,31 @@ namespace QLCHTHUOC.Controllers
                 var identityResult = await _userManager.CreateAsync(identityUser, registerRequestDTO.Password);
                 if (identityResult.Succeeded)
                 {
+                    // Gán vai trò cho người dùng
+                    if (registerRequestDTO.Roles != null && registerRequestDTO.Roles.Any())
+                    {
+                        var roleResult = await _userManager.AddToRolesAsync(identityUser, registerRequestDTO.Roles);
+                        if (!roleResult.Succeeded)
+                        {
+                            return BadRequest("Failed to assign roles to the user.");
+                        }
+                    }
                     _logger.LogInformation($"Đăng ký thành công từ API: {registerRequestDTO.Username}");
-
                     return Ok("Đăng ký thành công từ API");
                 }
                 else
                 {
                     _logger.LogError("Đăng ký thất bại từ API");
-
                     return BadRequest("Đăng ký thất bại từ API");
                 }
             }
             catch (Exception ex)
             {
-                
                 _logger.LogError(ex, "Lỗi khi thực hiện đăng ký từ API");
-
                 return StatusCode(500, "Lỗi khi thực hiện đăng ký từ API");
             }
         }
+
 
         [AllowAnonymous]
         [HttpPost("Login")]
@@ -78,13 +84,13 @@ namespace QLCHTHUOC.Controllers
                     if (checkPasswordResult)
                     {
                         var roles = await _userManager.GetRolesAsync(user);
-                        if (roles != null)
+                        if (roles != null && roles.Any())
                         {
-                            var jwtToken = _tokenRepository.CreateJWTToken(user, roles.ToList());
+                            var jwtToken = CreateJWTToken(user, roles.ToList());
                             var response = new LoginResponseDTO
                             {
                                 JwtToken = jwtToken,
-                                Username = user.UserName, 
+                                Username = user.UserName,
                                 Email = user.Email,
                                 Roles = roles.ToList()
                             };
@@ -105,26 +111,29 @@ namespace QLCHTHUOC.Controllers
         private string CreateJWTToken(IdentityUser user, List<string> roles)
         {
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.UserName)
-            };
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id),
+        new Claim(ClaimTypes.Name, user.UserName),
+        new Claim(ClaimTypes.Email, user.Email)
+    };
 
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddDays(7), // Thời hạn của token
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])), SecurityAlgorithms.HmacSha256Signature)
-            };
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(15),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }
