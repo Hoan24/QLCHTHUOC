@@ -25,18 +25,18 @@ namespace QLCHTHUOC.Controllers
         [HttpGet("get-all-customer")]
         public IActionResult GetAll(string? filterOn = null, string?
 filterQuery = null, string? sortBy = null,
- bool isAscending = true, int pageNumber = 1, int pageSize = 1000)
+ bool isAscending = true)
         {
             try
             {
-                return Ok(_customer.GetAll(filterOn,filterQuery,sortBy,isAscending,pageNumber,pageNumber));
+                return Ok(_customer.GetAll(filterOn,filterQuery,sortBy,isAscending));
             }
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-        [HttpGet("{id}")]
+        [HttpGet("/get-by-id/{id}")]
         public IActionResult Get(int id)
         {
             try
@@ -49,7 +49,7 @@ filterQuery = null, string? sortBy = null,
             }
         }
         [Authorize(Roles = "Read,Write")]
-        [HttpPost]
+        [HttpPost("add-customer")]
         public IActionResult AddCustomer(CustomerAddDTO customerDTO)
         {
             try
@@ -62,7 +62,7 @@ filterQuery = null, string? sortBy = null,
             }
         }
         [Authorize(Roles = "Read,Write")]
-        [HttpPut]
+        [HttpPut("update-by-id/{id}")]
         public IActionResult UpdateCustomer(CustomerDTO customerDTO)
         {
             try
@@ -76,7 +76,7 @@ filterQuery = null, string? sortBy = null,
             }
         }
         [Authorize(Roles = "Read,Write")]
-        [HttpDelete("{id}")]
+        [HttpDelete("del-by-id/{id}")]
         public IActionResult DeleteCustomer(int id)
         {
             try

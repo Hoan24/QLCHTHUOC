@@ -10,7 +10,6 @@ namespace QLCHTHUOC.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-
     public class MedicineController : ControllerBase
     {
         private readonly IMedicine _medicine;
@@ -24,31 +23,27 @@ namespace QLCHTHUOC.Controllers
             _tokenRepository = tokenRepository;
             _logger = logger;
         }
-        
+
         [HttpGet("get-all-medicine")]
-        [Authorize(Roles = "Read")]
-        public IActionResult GetAll(string? filterOn = null, string?
-filterQuery = null, string? sortBy = null,
- bool isAscending = true, int pageNumber = 1, int pageSize = 1000)
+        [AllowAnonymous]
+        public IActionResult GetAll(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true)
         {
             try
             {
                 _logger.LogInformation("GetAll Medicine Action method was invoked");
-                _logger.LogWarning("This is a warning log");
-                _logger.LogError("This is a error log");
-                var allMedidcine = _medicine.MedicineDTOs(filterOn, filterQuery, sortBy, isAscending, pageNumber, pageNumber);
-
-                _logger.LogInformation($"Finished GetAllBook request with data { JsonSerializer.Serialize(allMedidcine)}");
-
-                return Ok(allMedidcine);  
+                var allMedidcine = _medicine.MedicineDTOs(filterOn, filterQuery, sortBy, isAscending);
+                _logger.LogInformation($"Finished GetAll request with data {JsonSerializer.Serialize(allMedidcine)}");
+                return Ok(allMedidcine);
             }
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+
         [Authorize(Roles = "Read,Write")]
-        [HttpGet("{id}")]
+        [HttpGet("get-by-id/{id}")]
         public IActionResult Get(int id)
         {
             try
@@ -60,8 +55,9 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+       
         [Authorize(Roles = "Read,Write")]
-        [HttpPost]
+        [HttpPost("add-medicine")]
         public IActionResult AddMedicine(MedicineAddDTO medicineDTO)
         {
             try
@@ -73,8 +69,9 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
         [Authorize(Roles = "Read,Write")]
-        [HttpPut]
+        [HttpPut("update-by-id/{id}")]
         public IActionResult UpdateCustomer(MedicineDTO medicineDTO)
         {
             try
@@ -87,8 +84,9 @@ filterQuery = null, string? sortBy = null,
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
         [Authorize(Roles = "Read,Write")]
-        [HttpDelete("{id}")]
+        [HttpDelete("del-by-id/{id}")]
         public IActionResult DeleteMedicine(int id)
         {
             try

@@ -4,6 +4,7 @@ namespace QLCHTHUOC.Model.DTO
 {
     public class CustomerDTO
     {
+        [Required]
         public int Id { get; set; }
         public string Name { get; set; }
         [Required]

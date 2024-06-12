@@ -8,7 +8,9 @@
         public Customer Customer { get; set; }
         public string CustomerName { get; set; }
         public List<string> MedicineName { get; set; }
-        
+        public List<int> MedicineId{ get; set; }
+        public List<string> ImgURls { get; set; }
+
 
     }
 }

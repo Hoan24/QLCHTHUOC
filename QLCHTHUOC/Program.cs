@@ -11,26 +11,28 @@ using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Cấu hình logging
 builder.Services.AddLogging(loggingBuilder =>
 {
     loggingBuilder.ClearProviders();
     loggingBuilder.AddConsole();
 });
-// Add services to the container.
-builder.Services.AddHttpClient();
+var _logger = new LoggerConfiguration()
+    .WriteTo.Console() // ghi ra console 
+    .WriteTo.File("Logs/Medicine_log.txt", rollingInterval: RollingInterval.Day)
+    .MinimumLevel.Information()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(_logger);
+
+// Cấu hình Identity
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Medicine")
     .AddEntityFrameworkStores<BaoCaoDbContext>()
     .AddDefaultTokenProviders();
-// Add services to the container.
-var _logger = new LoggerConfiguration()
- .WriteTo.Console()// ghi ra console 
- .WriteTo.File("Logs/Medicine_log.txt", rollingInterval: RollingInterval.Minute)
- .MinimumLevel.Information()
- .CreateLogger();
-builder.Logging.ClearProviders();
-builder.Logging.AddSerilog(_logger);
+
 builder.Services.Configure<IdentityOptions>(option =>
 {
     option.Password.RequireDigit = false;
@@ -41,8 +43,34 @@ builder.Services.Configure<IdentityOptions>(option =>
     option.Password.RequiredUniqueChars = 1;
 });
 
-builder.Services.AddControllers();
+// Cấu hình DbContext
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultCon")));
+builder.Services.AddDbContext<BaoCaoDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BaoCaoCon")));
 
+// Cấu hình JWT Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ClockSkew = TimeSpan.Zero,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+
+// Cấu hình Swagger
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -76,45 +104,25 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
-//Interface và Reponsitory
+// Đăng ký dịch vụ
 builder.Services.AddScoped<IOrder, OrderRePon>();
 builder.Services.AddScoped<IMedicine, MedicineRePon>();
 builder.Services.AddScoped<ICustomer, CustomerRepon>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultCon")));
-builder.Services.AddDbContext<BaoCaoDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("BaoCaoCon")));
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        ClockSkew = TimeSpan.Zero,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-    };
-});
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Cấu hình HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Medicine API V1");
+    });
 }
 else
 {

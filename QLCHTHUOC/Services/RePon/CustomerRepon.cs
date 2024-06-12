@@ -72,7 +72,7 @@ namespace QLCHTHUOC.Services.RePon
         }
         public List<CustomerDTO> GetAll(string? filterOn = null, string?
 filterQuery = null, string? sortBy = null,
- bool isAscending = true, int pageNumber = 1, int pageSize = 1000)
+ bool isAscending = true)
         {
             var list = _appDbContext.Customers.Select(a => new CustomerDTO
             {
@@ -96,16 +96,18 @@ list.OrderByDescending(x => x.Name);
                 }
             }
             
-            var skipResults = (pageNumber - 1) * pageSize;
-            return list.Skip(skipResults).Take(pageSize).ToList();
+            return list.ToList();
             
         }
         public void Update(CustomerDTO CustomerDTO)
         {
             var _Customer = _appDbContext.Customers.SingleOrDefault(m => m.Id == CustomerDTO.Id);
-            _Customer.Name = CustomerDTO.Name;
-            _Customer.Email = CustomerDTO.Email;
-            _Customer.Phone = CustomerDTO.Phone;
+            if (_Customer != null)
+            {
+                _Customer.Name = CustomerDTO.Name;
+                _Customer.Email = CustomerDTO.Email;
+                _Customer.Phone = CustomerDTO.Phone;
+            } 
             _appDbContext.SaveChanges();
         }
     }

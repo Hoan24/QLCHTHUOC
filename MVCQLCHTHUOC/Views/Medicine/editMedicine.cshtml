@@ -1,0 +1,47 @@
+﻿@model MVCQLCHTHUOC.Models.MedicineEditDTO
+
+<div class="clearfix"></div>
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <div class="row mt-3">
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-body p-2">
+                        <div class="card-title mb-2">Sửa sản phẩm</div>
+                        <hr class="my-2">
+                        <form asp-controller="Medicine" asp-action="EditMedicine" method="post" enctype="multipart/form-data">
+                            <div class="form-group mb-2">
+                                <label for="input-1" class="form-label">Mã số sản phẩm</label>
+                                <input type="text" class="form-control form-control-sm" id="input-1" placeholder="Nhập số sản phẩm" asp-for="Id">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="input-2" class="form-label">Tên sản phẩm</label>
+                                <input type="text" class="form-control form-control-sm" id="input-2" placeholder="Nhập tên sản phẩm" asp-for="Name">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="input-3" class="form-label">Mô tả</label>
+                                <input type="text" class="form-control form-control-sm" id="input-3" placeholder="Nhập mô tả sản phẩm" asp-for="Description">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="input-4" class="form-label">Giá bán</label>
+                                <input type="text" class="form-control form-control-sm" id="input-4" placeholder="Nhập giá bán sản phẩm" asp-for="Price">
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="input-5" class="form-label">Số lượng</label>
+                                <input type="text" class="form-control form-control-sm" id="input-5" placeholder="Nhập số lượng sản phẩm" asp-for="Stock">
+                            </div>
+                            <div class="form-group mb-2">
+                                <input type="file" id="uploadimg" name="uploadimg" accept="image/*" class="form-control form-control-sm">
+                            </div>
+                            <div class="form-group d-flex justify-content-between">
+                                <button type="submit" class="btn btn-primary btn-sm">Sửa sản phẩm</button>
+                                <a asp-controller="Medicine" asp-action="Index" class="btn btn-secondary btn-sm">Quay lại</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

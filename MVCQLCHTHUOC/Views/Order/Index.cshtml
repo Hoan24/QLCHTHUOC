@@ -1,0 +1,60 @@
+﻿<div class="clearfix" style="width: 1000px; margin: 0 auto;">
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <div class="row mt-8">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title" style="font-size: 20px;">DANH SÁCH ĐƠN HÀNG</h5>
+                            <div class="table-responsive">
+                                @foreach (var item in Model)
+                                {
+                                    <div class="order-details" style="padding: 10px;">
+                                        <div class="order-detail" style="font-size: 18px;">
+                                            <strong>MÃ ĐƠN HÀNG:</strong> @item.Id
+                                        </div>
+                                        <div class="order-detail" style="font-size: 18px;">
+                                            <strong>MÃ KHÁCH HÀNG:</strong> @item.CustomerId
+                                        </div>
+                                        <div class="order-detail" style="font-size: 18px;">
+                                            <strong>NGÀY ĐẶT HÀNG:</strong> @item.OrderDate.ToString("dd/MM/yyyy")
+                                        </div>
+                                        <div class="order-detail" style="font-size: 18px;">
+                                            <strong>TÊN KHÁCH HÀNG:</strong> @item.CustomerName
+                                        </div>
+                                        <div class="order-detail" style="font-size: 18px;">
+                                            <strong>TÊN THUỐC:</strong>
+                                            @foreach (var medicineName in item.MedicineName)
+                                            {
+                                                <div>@medicineName</div>
+                                            }
+                                        </div>
+                                        <div class="order-detail">
+                                            <strong>HÌNH ẢNH:</strong>
+                                            @foreach (var imgUrl in item.ImgURls)
+                                            {
+                                                <img src="~/Upload/Medicine/@imgUrl" alt="Medicine Image" width="70" height="70" />
+                                            }
+                                        </div>
+                                        <div class="order-detail">
+                                            <strong>THAO TÁC:</strong>
+                                            <div class="btn-group">
+                                                <form asp-action="DeleteOrder" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                }
+                            </div>
+                            <div class="text-center mt-3">
+                                <a href="@Url.Action("AddOrder", "Order")" class="btn btn-success" style="font-size: 18px;">Thêm Đơn Hàng</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

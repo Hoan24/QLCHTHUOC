@@ -28,23 +28,40 @@ namespace QLCHTHUOC.Services.RePon
                     _appDbContext.SaveChanges();
                 }
             }
-          
+            else
+            {
+                var del = _appDbContext.Orders.SingleOrDefault(m => m.Id == id);
+                if (del != null)
+                {
+                    _appDbContext.Orders.Remove(del);
+                    _appDbContext.SaveChanges();
+                }
+            }
         }
 
         public OrderDTO GetOrder(int id)
         {
-            var i = _appDbContext.Orders.SingleOrDefault(m => m.Id == id);
-            if (i != null)
+            var order = _appDbContext.Orders
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Medicine)
+                .SingleOrDefault(o => o.Id == id);
+
+            if (order != null)
             {
-                return new OrderDTO
+                var orderDTO = new OrderDTO
                 {
-                    Id = i.Id,
-                    CustomerId = i.CustomerId,
-                    OrderDate = i.OrderDate,
+                    Id = order.Id,
+                    CustomerId = order.CustomerId,
+                    OrderDate = order.OrderDate,
+                    ImgURls = order.OrderDetails.Select(od => od.Medicine.ImgURl).ToList()
                 };
+
+                return orderDTO;
             }
+
             return null;
         }
+
 
         public OrderAddDTO OrderAdd(OrderAddDTO dto)
         {
@@ -78,45 +95,49 @@ namespace QLCHTHUOC.Services.RePon
                 }
             }
 
-            // Save changes after all operations
             _appDbContext.SaveChanges();
              dto.TotalPrice = totalPrice;
         
             return dto;
         }
 
-        public List<OrderDTO> OrderDTOs(string? filterOn = null, string? filterQuery = null, string? sortBy = null,
-                                         bool isAscending = true, int pageNumber = 1, int pageSize = 1000)
+        public List<OrderDTO> OrderDTOs(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true)
         {
-            var list = _appDbContext.Orders.Select(a => new OrderDTO
-            {
-                Id = a.Id,
-                CustomerId = a.CustomerId,
-                CustomerName=a.Customer.Name,
-                MedicineName = _appDbContext.OrderDetails.Select(c => c.Medicine.Name).ToList(),
-                OrderDate = a.OrderDate,
+            var query = _appDbContext.Orders
+                                      .Include(o => o.Customer)
+                                      .Include(o => o.OrderDetails)
+                                      .ThenInclude(od => od.Medicine)
+                                      .AsQueryable();
 
-            }); 
-
-            if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
+            if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
             {
                 if (filterOn.Equals("OrderDate", StringComparison.OrdinalIgnoreCase))
                 {
                     if (DateTime.TryParse(filterQuery, out var orderDate))
                     {
-                        list = list.Where(x => x.OrderDate.Date == orderDate.Date);
+                        query = query.Where(o => o.OrderDate.Date == orderDate.Date);
                     }
                 }
             }
 
             if (!string.IsNullOrEmpty(sortBy))
             {
-                list = isAscending ? list.OrderBy(x => x.OrderDate) : list.OrderByDescending(x => x.OrderDate);
+                query = isAscending ? query.OrderBy(o => o.OrderDate) : query.OrderByDescending(o => o.OrderDate);
             }
 
-            // Pagination
-            var skipResults = (pageNumber - 1) * pageSize;
-            return list.Skip(skipResults).Take(pageSize).ToList();
+            var orders = query.ToList();
+            var orderDTOs = orders.Select(o => new OrderDTO
+            {
+                Id = o.Id,
+                CustomerId = o.CustomerId,
+                CustomerName = o.Customer.Name,
+                OrderDate = o.OrderDate,
+                MedicineName = o.OrderDetails.Select(od => od.Medicine.Name).ToList(),
+                MedicineId = o.OrderDetails.Select(od => od.Medicine.Id).ToList(),
+                ImgURls = o.OrderDetails.Select(od => od.Medicine.ImgURl).ToList()
+            }).ToList();
+
+            return orderDTOs;
         }
 
         public void Update(OrderDTO OrderDTO)
@@ -126,6 +147,7 @@ namespace QLCHTHUOC.Services.RePon
             {
                 _Order.OrderDate = OrderDTO.OrderDate;
                 _Order.CustomerId = OrderDTO.CustomerId;
+               
                 _appDbContext.SaveChanges();
             }
         }

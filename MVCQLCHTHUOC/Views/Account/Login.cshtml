@@ -1,0 +1,70 @@
+﻿@model MVCQLCHTHUOC.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div id="wrapper">
+    <div class="card card-authentication1 mx-auto my-5">
+        <div class="card-body">
+            <div class="card-content p-2">
+                <div class="card-title text-uppercase text-center py-3">ĐĂNG NHẬP</div>
+                <form asp-action="Login" method="post">
+                    <div class="form-group">
+                        <label asp-for="Username" class="sr-only">Username</label>
+                        <div class="position-relative has-icon-right">
+                            <input asp-for="Username" id="exampleInputUsername" class="form-control input-shadow" placeholder="Enter Username">
+                            <div class="form-control-position">
+                                <i class="icon-user"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password" class="sr-only">Password</label>
+                        <div class="position-relative has-icon-right">
+                            <input asp-for="Password" type="password" id="exampleInputPassword" class="form-control input-shadow" placeholder="Enter Password">
+                            <div class="form-control-position">
+                                <i class="icon-lock"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-light btn-block">Đăng Nhập</button>
+                </form>
+
+                <div class="text-center mt-3">Đăng nhập với</div>
+
+                <div class="form-row mt-4">
+                    <div class="form-group mb-0 col-6">
+                        <button type="button" class="btn btn-light btn-block"><i class="fa fa-facebook-square"></i> Facebook</button>
+                    </div>
+                    <div class="form-group mb-0 col-6 text-right">
+                        <button type="button" class="btn btn-light btn-block"><i class="fa fa-twitter-square"></i> Twitter</button>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(ViewBag.JwtToken))
+                {
+                    <div class="form-group mt-4">
+                        <label for="jwtToken">JWT Token</label>
+                        <input type="text" class="form-control" id="jwtToken" value="@ViewBag.JwtToken" readonly>
+                    </div>
+                }
+
+               
+            </div>
+        </div>
+        <div class="card-footer text-center py-3">
+            <p class="text-warning mb-0">Bạn chưa có tài khoản? <a asp-action="Register"> Đăng ký ngay</a></p>
+        </div>
+    </div>
+</div><!--wrapper-->
+@section Scripts {
+    <script>
+        // Kiểm tra xem JWT Token đã tồn tại hay không
+        var jwtToken = "@ViewBag.JwtToken";
+        if (jwtToken) {
+            // Nếu có JWT Token, chuyển hướng đến trang "Index" của "MedicineController"
+            window.location.href = "@Url.Action("Index", "Medicine")";
+        }
+    </script>
+}

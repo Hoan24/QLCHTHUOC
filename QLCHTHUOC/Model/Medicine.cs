@@ -10,6 +10,7 @@ namespace QLCHTHUOC.Model
         public string Description { get; set; }
         public decimal Price { get; set; }
         public int Stock { get; set; }
+        public string ImgURl { get; set; }
         public ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }

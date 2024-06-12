@@ -1,0 +1,36 @@
+﻿@model MVCQLCHTHUOC.Models.CustomerAddDTO
+
+<div class="clearfix"></div>
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <div class="row mt-3 justify-content-center">
+            <div class="col-xl-14 col-lg-16">
+                <div class="card" style="border-radius: 1rem; padding: 2rem;">
+                    <div class="card-body">
+                        <div class="card-title text-center display-4" style="font-size: 2.5rem; font-weight: bold;">Thêm khách hàng</div>
+                        <hr>
+                        <form asp-controller="Customer" asp-action="AddCustomer" method="post">
+                            <div class="form-group">
+                                <label for="name" class="h4" style="font-size: 1.5rem;">Tên khách hàng</label>
+                                <input type="text" class="form-control form-control-lg" id="name" name="Name" placeholder="Nhập tên khách hàng" required style="font-size: 1.25rem; padding: 1rem;">
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="h4" style="font-size: 1.5rem;">Email</label>
+                                <input type="email" class="form-control form-control-lg" id="email" name="Email" placeholder="Nhập địa chỉ email" required style="font-size: 1.25rem; padding: 1rem;">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone" class="h4" style="font-size: 1.5rem;">Số điện thoại</label>
+                                <input type="text" class="form-control form-control-lg" id="phone" name="Phone" placeholder="Nhập số điện thoại" required style="font-size: 1.25rem; padding: 1rem;">
+                            </div>
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary btn-lg" style="margin: 0.5rem; font-size: 1.25rem; padding: 0.75rem 1.5rem;">Thêm khách hàng</button>
+                                <a asp-controller="Customer" asp-action="Index" class="btn btn-secondary btn-lg" style="margin: 0.5rem; font-size: 1.25rem; padding: 0.75rem 1.5rem;">Quay lại</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

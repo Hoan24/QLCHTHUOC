@@ -6,7 +6,7 @@ namespace QLCHTHUOC.Services.Interfaces
     {
           List<OrderDTO> OrderDTOs(string? filterOn = null, string?
 filterQuery = null, string? sortBy = null,
- bool isAscending = true, int pageNumber = 1, int pageSize = 1000);
+ bool isAscending = true);
         OrderDTO GetOrder (int id);
         OrderAddDTO OrderAdd (OrderAddDTO dto);
        void  Update(OrderDTO OrderDTO);
