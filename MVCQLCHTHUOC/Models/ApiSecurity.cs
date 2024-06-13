@@ -23,12 +23,12 @@ namespace MVCQLCHTHUOC.Models
                         ValidIssuer = issuer,
                         ValidAudience = audience,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-                        ClockSkew = TimeSpan.Zero // Adjust the expiration tolerance
+                        ClockSkew = TimeSpan.Zero 
                     };
                 });
         }
 
-        // Method to apply authorization policy for JWT token
+        
         public static void ConfigureJwtAuthorization(IServiceCollection services)
         {
             services.AddAuthorization(options =>
@@ -39,7 +39,7 @@ namespace MVCQLCHTHUOC.Models
             });
         }
 
-        // Decorator to apply JWT token authorization to controllers or actions
+     
         public class JwtAuthorizeAttribute : AuthorizeAttribute
         {
             public JwtAuthorizeAttribute()

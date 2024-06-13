@@ -143,7 +143,6 @@ namespace MVCQLCHTHUOC.Controllers
             }
             catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-                // Token is invalid or expired
                 return RedirectToAction("Login", "Account");
             }
             catch (Exception ex)

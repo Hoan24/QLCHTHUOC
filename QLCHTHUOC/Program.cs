@@ -12,21 +12,21 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Cấu hình logging
+
 builder.Services.AddLogging(loggingBuilder =>
 {
     loggingBuilder.ClearProviders();
     loggingBuilder.AddConsole();
 });
 var _logger = new LoggerConfiguration()
-    .WriteTo.Console() // ghi ra console 
+    .WriteTo.Console() 
     .WriteTo.File("Logs/Medicine_log.txt", rollingInterval: RollingInterval.Day)
     .MinimumLevel.Information()
     .CreateLogger();
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(_logger);
 
-// Cấu hình Identity
+
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Medicine")
@@ -49,7 +49,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddDbContext<BaoCaoDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BaoCaoCon")));
 
-// Cấu hình JWT Authentication
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -70,7 +70,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Cấu hình Swagger
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -104,7 +104,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Đăng ký dịch vụ
+
 builder.Services.AddScoped<IOrder, OrderRePon>();
 builder.Services.AddScoped<IMedicine, MedicineRePon>();
 builder.Services.AddScoped<ICustomer, CustomerRepon>();

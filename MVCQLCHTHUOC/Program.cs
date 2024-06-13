@@ -4,12 +4,11 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 builder.Services.AddSession(options =>
 {
-    options.Cookie.IsEssential = true; // Make the session cookie essential
+    options.Cookie.IsEssential = true; 
 });
 
 var jwtSection = builder.Configuration.GetSection("Jwt");
@@ -17,7 +16,6 @@ var issuer = jwtSection["Issuer"];
 var audience = jwtSection["Audience"];
 var key = jwtSection["Key"];
 
-// Kiểm tra các giá trị cấu hình
 if (string.IsNullOrEmpty(issuer))
 {
     throw new ArgumentNullException(nameof(issuer), "Jwt:Issuer is missing in configuration.");
@@ -54,7 +52,6 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
